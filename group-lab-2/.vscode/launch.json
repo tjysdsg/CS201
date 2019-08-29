@@ -1,0 +1,53 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - Problem_1_2_18",
+            "request": "launch",
+            "mainClass": "app.Problem_1_2_18",
+            "projectName": "Group_Lab_2"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - Problem_1_2_17",
+            "request": "launch",
+            "mainClass": "app.Problem_1_2_17",
+            "projectName": "Group_Lab_2"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - Problem_1_3_8",
+            "request": "launch",
+            "mainClass": "app.Problem_1_3_8",
+            "projectName": "Group_Lab_2"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - Problem_1_2_16",
+            "request": "launch",
+            "mainClass": "app.Problem_1_2_16",
+            "projectName": "Group_Lab_2"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - Problem_1_2_8",
+            "request": "launch",
+            "mainClass": "app.Problem_1_2_8",
+            "projectName": "Group_Lab_2"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - Problem_1_2_3",
+            "request": "launch",
+            "mainClass": "app.Problem_1_2_3",
+            "projectName": "Group_Lab_2"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - Problem_1_3_8",
+            "request": "launch",
+            "mainClass": "app.Problem_1_3_8",
+            "projectName": "group-lab-2"
+        }
+    ]
+}
