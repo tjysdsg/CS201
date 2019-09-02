@@ -1,0 +1,11 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - Minesweeper",
+            "request": "launch",
+            "mainClass": "Minesweeper",
+            "projectName": "Minesweeper"
+        }
+    ]
+}
