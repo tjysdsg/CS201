@@ -1,0 +1,18 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - Problem_1_4_18",
+            "request": "launch",
+            "mainClass": "app.Problem_1_4_18",
+            "projectName": "homework-2_e3a8d3e"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - Problem_1_4_15",
+            "request": "launch",
+            "mainClass": "app.Problem_1_4_15",
+            "projectName": "homework-2_e3a8d3e"
+        }
+    ]
+}
