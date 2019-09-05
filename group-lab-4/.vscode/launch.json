@@ -1,0 +1,11 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - Problem_2_3_27",
+            "request": "launch",
+            "mainClass": "app.Problem_2_3_27",
+            "projectName": "group-lab-4_c4669d1d"
+        }
+    ]
+}
