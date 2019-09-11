@@ -1,0 +1,18 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - Statistics",
+            "request": "launch",
+            "mainClass": "app.Statistics",
+            "projectName": "group-lab-5_c4669d1e"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - WeatherData",
+            "request": "launch",
+            "mainClass": "app.WeatherData",
+            "projectName": "group-lab-5_c4669d1e"
+        }
+    ]
+}
