@@ -18,10 +18,6 @@ public class Problem_3_3_20 {
             return this.dna.charAt(i);
         }
 
-        public void addCodon(String codon) {
-            this.dna += codon;
-        }
-
         public boolean isPotentialGene() {
             // Length is a multiple of 3.
             if (dna.length() % 3 != 0)
