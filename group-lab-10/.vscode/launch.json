@@ -1,0 +1,11 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - TestDriver",
+            "request": "launch",
+            "mainClass": "TestDriver",
+            "projectName": "group-lab-10_c86d0656"
+        }
+    ]
+}
