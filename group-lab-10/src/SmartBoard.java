@@ -89,7 +89,6 @@ public class SmartBoard implements Board {
             return true;
         } // otherwise it's possible for them to have a cross point
         else {
-            // TODO: optimize
             // search for the same offset
             for (int i = 0; i < wp1.length(); ++i) {
                 int searched = wp2.searchIndex(wp1.getIndex(i));

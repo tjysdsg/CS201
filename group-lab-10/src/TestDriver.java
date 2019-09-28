@@ -1,12 +1,12 @@
 public class TestDriver {
 	public static void main(String[] args) {
 		System.out.println("\n---------------------\ntesting smart board");
-		Board smartBoard = new SmartBoard();
-		testBoard(smartBoard);
+		// Board smartBoard = new SmartBoard();
+		// testBoard(smartBoard);
 
 		System.out.println("\n---------------------\ntesting not so smart board");
-		// Board notSoSmartBoard = new NotSoSmartBoard();
-		// testBoard(notSoSmartBoard);
+		Board notSoSmartBoard = new NotSoSmartBoard();
+		testBoard(notSoSmartBoard);
 	}
 
 	public static void testBoard(Board board) {
