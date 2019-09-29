@@ -34,8 +34,10 @@ public class NotSoSmartBoard extends BoardBase {
             // remember where the overlapping is
             if (new_grid[r][c] == word.charAt(i)) {
                 overlappingPts.add(i);
-            } else {
+            } else if (new_grid[r][c] == '0') {
                 new_grid[r][c] = word.charAt(i);
+            } else {
+                return null;
             }
         }
         // check the whole board

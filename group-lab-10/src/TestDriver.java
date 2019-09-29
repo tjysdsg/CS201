@@ -54,6 +54,6 @@ public class TestDriver {
 	}
 
 	public static void testBoard(Board board) {
-		testBoard(board, false);
+		testBoard(board, true);
 	}
 }

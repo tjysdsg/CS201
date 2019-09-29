@@ -39,8 +39,10 @@ public class SmartBoard extends BoardBase {
             // remember where the overlapping is
             if (new_grid[r * n_cols + c] == word.charAt(i)) {
                 overlappingPts.add(i);
-            } else {
+            } else if (new_grid[r * n_cols + c] == '0') {
                 new_grid[r * n_cols + c] = word.charAt(i);
+            } else {
+                return null;
             }
         }
         // check the part of the board that has been modified
@@ -130,11 +132,11 @@ public class SmartBoard extends BoardBase {
     }
 
     public int searchString(String search) {
-        return searchIndex(search, 0, dictionary.length - 1);
+        return searchString(search, 0, dictionary.length - 1);
     }
 
     // [start, end]
-    public int searchIndex(String search, int start, int end) {
+    public int searchString(String search, int start, int end) {
         if (start > end) {
             return -1;
         }
@@ -143,9 +145,9 @@ public class SmartBoard extends BoardBase {
             return mid;
         }
         if (search.compareTo(dictionary[mid]) > 0) {
-            return searchIndex(search, mid + 1, end);
+            return searchString(search, mid + 1, end);
         } else {
-            return searchIndex(search, start, mid - 1);
+            return searchString(search, start, mid - 1);
         }
     }
 
