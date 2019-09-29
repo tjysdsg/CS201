@@ -1,22 +1,25 @@
+import java.io.File;
+
 public class TestDriver {
 	public static void main(String[] args) {
 		System.out.println("\n---------------------\ntesting smart board");
-		// Board smartBoard = new SmartBoard();
-		// testBoard(smartBoard);
+		Board smartBoard = new SmartBoard();
+		testBoard(smartBoard);
 
 		System.out.println("\n---------------------\ntesting not so smart board");
-		Board notSoSmartBoard = new NotSoSmartBoard();
-		testBoard(notSoSmartBoard);
+		// Board notSoSmartBoard = new NotSoSmartBoard();
+		// testBoard(notSoSmartBoard);
 	}
 
 	public static void testBoard(Board board) {
 		Stopwatch s = new Stopwatch();
 
-		// board.setupNewBoard("https://www.wordgamedictionary.com/sowpods/download/sowpods.txt",
-		// 10, 10);
-		// TIP: download the file and save it to the project directory to save a lot of
-		// time; then, comment out the line above and un-comment the line below
-		board.setupNewBoard("sowpods.txt", 10, 10);
+		File f = new File("sowpods.txt");
+		if (f.isFile()) {
+			board.setupNewBoard("sowpods.txt", 10, 10);
+		} else {
+			board.setupNewBoard("https://www.wordgamedictionary.com/sowpods/download/sowpods.txt", 10, 10);
+		}
 
 		double boardTime = s.elapsedTime();
 
