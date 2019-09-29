@@ -3,15 +3,14 @@ import java.util.*;
 public class SmartBoard extends BoardBase {
     @Override
     public void setupNewBoard(String wordListFilename, int rows, int columns) {
-        this.n_rows = rows;
-        this.n_cols = columns;
-        In filein = new In(wordListFilename);
+        super.setupNewBoard(wordListFilename, rows, columns);
         this.grid = new char[rows * columns];
         for (int i = 0; i < rows * columns; ++i) {
             this.grid[i] = '0';
         }
-        dictionary = filein.readAllLines();
-        this.dictSet = new HashSet<String>(Arrays.asList(dictionary));
+        List<String> dictSorted = Arrays.asList(this.dictionary);
+        Collections.sort(dictSorted);
+        this.dictionary = dictSorted.toArray(new String[0]);
     }
 
     public String playWord(Play p, boolean dryRunOnly) {
@@ -44,9 +43,19 @@ public class SmartBoard extends BoardBase {
                 new_grid[r * n_cols + c] = word.charAt(i);
             }
         }
-        // check the whole board
-        // check all rows
-        for (int i = 0; i < n_rows; ++i) {
+        // check the part of the board that has been modified
+        ArrayList<Integer> rows2Check = new ArrayList<Integer>();
+        ArrayList<Integer> cols2Check = new ArrayList<Integer>();
+        rows2Check.add(w_r);
+        cols2Check.add(w_c);
+        for (int i = 1; i < word.length(); ++i) {
+            if (isVertical) {
+                rows2Check.add(w_r + i);
+            } else {
+                cols2Check.add(w_c + i);
+            }
+        }
+        for (int i : rows2Check) {
             ArrayList<String> seqs = this.getMaxLenSequence(this.rowAt(new_grid, i));
             for (String s : seqs) {
                 if (s.length() > 1 && !this.dictContains(s)) {
@@ -54,9 +63,7 @@ public class SmartBoard extends BoardBase {
                 }
             }
         }
-
-        // check all cols
-        for (int i = 0; i < n_cols; ++i) {
+        for (int i : cols2Check) {
             ArrayList<String> seqs = this.getMaxLenSequence(this.colAt(new_grid, i));
             for (String s : seqs) {
                 if (s.length() > 1 && !this.dictContains(s)) {
@@ -64,6 +71,8 @@ public class SmartBoard extends BoardBase {
                 }
             }
         }
+
+        // place in word
         if (!dryRunOnly) {
             this.grid = new_grid;
         }
@@ -100,7 +109,6 @@ public class SmartBoard extends BoardBase {
         return result;
     }
 
-
     @Override
     public String toString() {
         String result = "";
@@ -118,9 +126,28 @@ public class SmartBoard extends BoardBase {
     }
 
     protected boolean dictContains(String word) {
-        return this.dictSet.contains(word);
+        return searchString(word) != -1;
     }
 
-    private HashSet<String> dictSet;
+    public int searchString(String search) {
+        return searchIndex(search, 0, dictionary.length - 1);
+    }
+
+    // [start, end]
+    public int searchIndex(String search, int start, int end) {
+        if (start > end) {
+            return -1;
+        }
+        int mid = (start + end) / 2;
+        if (search.compareTo(dictionary[mid]) == 0) {
+            return mid;
+        }
+        if (search.compareTo(dictionary[mid]) > 0) {
+            return searchIndex(search, mid + 1, end);
+        } else {
+            return searchIndex(search, start, mid - 1);
+        }
+    }
+
     private char[] grid;
 }
