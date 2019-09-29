@@ -1,30 +1,17 @@
 import java.util.*;
 
-public class SmartBoard implements Board {
+public class SmartBoard extends BoardBase {
+    @Override
     public void setupNewBoard(String wordListFilename, int rows, int columns) {
         this.n_rows = rows;
         this.n_cols = columns;
-        this.grid = new char[rows][columns];
-        for (int i = 0; i < rows; ++i) {
-            for (int j = 0; j < columns; ++j) {
-                grid[i][j] = '0';
-            }
-        }
         In filein = new In(wordListFilename);
-        this.dictionary = filein.readAllLines();
+        this.grid = new char[rows * columns];
+        for (int i = 0; i < rows * columns; ++i) {
+            this.grid[i] = '0';
+        }
+        dictionary = filein.readAllLines();
         this.dictSet = new HashSet<String>(Arrays.asList(dictionary));
-    }
-
-    public int getRows() {
-        return n_rows;
-    }
-
-    public int getColumns() {
-        return n_cols;
-    }
-
-    public char getLetterAt(int row, int col) {
-        return this.grid[row][col];
     }
 
     public String playWord(Play p, boolean dryRunOnly) {
@@ -34,11 +21,9 @@ public class SmartBoard implements Board {
         int w_c = p.getCol();
         boolean isVertical = p.isVertical();
         // make a copy of grid to check without actually modifying it
-        char[][] new_grid = new char[n_rows][n_cols];
-        for (int i = 0; i < n_rows; ++i) {
-            for (int j = 0; j < n_cols; ++j) {
-                new_grid[i][j] = this.grid[i][j];
-            }
+        char[] new_grid = new char[n_rows * n_cols];
+        for (int i = 0; i < n_rows * n_cols; ++i) {
+            new_grid[i] = this.grid[i];
         }
 
         ArrayList<Integer> overlappingPts = new ArrayList<Integer>();
@@ -53,10 +38,10 @@ public class SmartBoard implements Board {
                 c = w_c + i;
             }
             // remember where the overlapping is
-            if (new_grid[r][c] == word.charAt(i)) {
+            if (new_grid[r * n_cols + c] == word.charAt(i)) {
                 overlappingPts.add(i);
             } else {
-                new_grid[r][c] = word.charAt(i);
+                new_grid[r * n_cols + c] = word.charAt(i);
             }
         }
         // check the whole board
@@ -84,68 +69,58 @@ public class SmartBoard implements Board {
         }
 
         // remove overlapped characters from string
-        for (int i : overlappingPts) {
-            word = word.substring(0, i) + word.substring(i + 1);
+        if (overlappingPts.size() > 0) {
+            String result = "";
+            result += word.substring(0, overlappingPts.get(0)) + word.substring(overlappingPts.get(0) + 1);
+            for (int i = 1; i < overlappingPts.size(); ++i) {
+                result += word.substring(overlappingPts.get(i - 1) + 1, overlappingPts.get(i));
+            }
+            if (overlappingPts.size() > 1) {
+                result += word.substring(overlappingPts.get(overlappingPts.size() - 1) + 1);
+            }
+            return result;
+        } else {
+            return word;
         }
-        return word;
     }
 
-    public String toString() {
-        String result = "";
-        for (int i = 0; i < this.n_rows; ++i) {
-            for (int j = 0; j < this.n_rows; ++j) {
-                if (grid[i][j] == '0') {
-                    result += "*";
-                } else {
-                    result += "" + grid[i][j];
-                }
-            }
-            result += "\n";
+    private char[] rowAt(char[] grid, int index) {
+        char[] result = new char[this.n_cols];
+        for (int i = 0; i < n_rows; ++i) {
+            result[i] = grid[index * n_cols + i];
         }
         return result;
     }
 
-    private char[] rowAt(char[][] grid, int index) {
-        return grid[index];
-    }
-
-    private char[] colAt(char[][] grid, int index) {
+    private char[] colAt(char[] grid, int index) {
         char[] result = new char[this.n_rows];
         for (int i = 0; i < n_rows; ++i) {
-            result[i] = grid[i][index];
+            result[i] = grid[i * n_cols + index];
         }
         return result;
     }
 
-    private ArrayList<String> getMaxLenSequence(char[] charSeq) {
-        ArrayList<String> results = new ArrayList<String>();
-        String s = "";
-        boolean started = false;
-        for (int i = 0; i < charSeq.length; ++i) {
-            if (started) {
-                if (charSeq[i] == '0') {
-                    started = false;
-                    results.add(s);
-                    s = new String();
-                } else {
-                    s += "" + charSeq[i];
-                }
+
+    @Override
+    public String toString() {
+        String result = "";
+        for (int i = 0; i < n_rows * n_cols; ++i) {
+            if (grid[i] == '0') {
+                result += "*";
             } else {
-                if (charSeq[i] != '0') {
-                    started = true;
-                    s += "" + charSeq[i];
-                }
+                result += "" + grid[i];
+            }
+            if ((i + 1) % n_cols == 0) {
+                result += "\n";
             }
         }
-        return results;
+        return result;
     }
 
-    private boolean dictContains(String word) {
+    protected boolean dictContains(String word) {
         return this.dictSet.contains(word);
     }
 
-    private char[][] grid;
-    private int n_rows, n_cols;
-    private String[] dictionary;
     private HashSet<String> dictSet;
+    private char[] grid;
 }

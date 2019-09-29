@@ -1,29 +1,9 @@
 import java.util.*;
 
-public class NotSoSmartBoard implements Board {
+public class NotSoSmartBoard extends BoardBase {
+    @Override
     public void setupNewBoard(String wordListFilename, int rows, int columns) {
-        this.n_rows = rows;
-        this.n_cols = columns;
-        this.grid = new char[rows][columns];
-        for (int i = 0; i < rows; ++i) {
-            for (int j = 0; j < columns; ++j) {
-                grid[i][j] = '0';
-            }
-        }
-        In filein = new In(wordListFilename);
-        this.dictionary = filein.readAllLines();
-    }
-
-    public int getRows() {
-        return n_rows;
-    }
-
-    public int getColumns() {
-        return n_cols;
-    }
-
-    public char getLetterAt(int row, int col) {
-        return this.grid[row][col];
+        super.setupNewBoard(wordListFilename, rows, columns);
     }
 
     public String playWord(Play p, boolean dryRunOnly) {
@@ -83,25 +63,19 @@ public class NotSoSmartBoard implements Board {
         }
 
         // remove overlapped characters from string
-        for (int i : overlappingPts) {
-            word = word.substring(0, i) + word.substring(i + 1);
-        }
-        return word;
-    }
-
-    public String toString() {
-        String result = "";
-        for (int i = 0; i < this.n_rows; ++i) {
-            for (int j = 0; j < this.n_rows; ++j) {
-                if (grid[i][j] == '0') {
-                    result += "*";
-                } else {
-                    result += "" + grid[i][j];
-                }
+        if (overlappingPts.size() > 0) {
+            String result = "";
+            result += word.substring(0, overlappingPts.get(0)) + word.substring(overlappingPts.get(0) + 1);
+            for (int i = 1; i < overlappingPts.size(); ++i) {
+                result += word.substring(overlappingPts.get(i - 1) + 1, overlappingPts.get(i));
             }
-            result += "\n";
+            if (overlappingPts.size() > 1) {
+                result += word.substring(overlappingPts.get(overlappingPts.size() - 1) + 1);
+            }
+            return result;
+        } else {
+            return word;
         }
-        return result;
     }
 
     private char[] rowAt(char[][] grid, int index) {
@@ -116,30 +90,7 @@ public class NotSoSmartBoard implements Board {
         return result;
     }
 
-    private ArrayList<String> getMaxLenSequence(char[] charSeq) {
-        ArrayList<String> results = new ArrayList<String>();
-        String s = "";
-        boolean started = false;
-        for (int i = 0; i < charSeq.length; ++i) {
-            if (started) {
-                if (charSeq[i] == '0') {
-                    started = false;
-                    results.add(s);
-                    s = new String();
-                } else {
-                    s += "" + charSeq[i];
-                }
-            } else {
-                if (charSeq[i] != '0') {
-                    started = true;
-                    s += "" + charSeq[i];
-                }
-            }
-        }
-        return results;
-    }
-
-    private boolean dictContains(String word) {
+    protected boolean dictContains(String word) {
         for (int i = 0; i < dictionary.length; ++i) {
             if (word.equals(dictionary[i])) {
                 return true;
@@ -147,8 +98,4 @@ public class NotSoSmartBoard implements Board {
         }
         return false;
     }
-
-    private char[][] grid;
-    private int n_rows, n_cols;
-    private String[] dictionary;
 }

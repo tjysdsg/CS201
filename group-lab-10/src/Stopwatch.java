@@ -2,11 +2,11 @@ public class Stopwatch {
 	private final long start;
 
 	public Stopwatch() {
-		start = System.currentTimeMillis();
+		start = System.nanoTime();
 	}
 
 	public double elapsedTime() {
-		long now = System.currentTimeMillis();
-		return (now - start) / 1000.0;
+		long now = System.nanoTime();
+		return (now - start);
 	}
 }
