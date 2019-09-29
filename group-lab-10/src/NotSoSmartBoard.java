@@ -12,7 +12,6 @@ public class NotSoSmartBoard implements Board {
         }
         In filein = new In(wordListFilename);
         this.dictionary = filein.readAllLines();
-        this.dictSet = new HashSet<String>(Arrays.asList(this.dictionary));
     }
 
     public int getRows() {
@@ -64,7 +63,7 @@ public class NotSoSmartBoard implements Board {
         for (int i = 0; i < n_rows; ++i) {
             ArrayList<String> seqs = this.getMaxLenSequence(this.rowAt(new_grid, i));
             for (String s : seqs) {
-                if (s.length() > 1 && !this.dictSet.contains(s)) {
+                if (s.length() > 1 && !this.dictContains(s)) {
                     return null;
                 }
             }
@@ -74,7 +73,7 @@ public class NotSoSmartBoard implements Board {
         for (int i = 0; i < n_cols; ++i) {
             ArrayList<String> seqs = this.getMaxLenSequence(this.colAt(new_grid, i));
             for (String s : seqs) {
-                if (s.length() > 1 && !this.dictSet.contains(s)) {
+                if (s.length() > 1 && !this.dictContains(s)) {
                     return null;
                 }
             }
@@ -140,8 +139,16 @@ public class NotSoSmartBoard implements Board {
         return results;
     }
 
+    private boolean dictContains(String word) {
+        for (int i = 0; i < dictionary.length; ++i) {
+            if (word.equals(dictionary[i])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private char[][] grid;
     private int n_rows, n_cols;
     private String[] dictionary;
-    private HashSet<String> dictSet;
 }
