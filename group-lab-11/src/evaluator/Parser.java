@@ -28,26 +28,27 @@ public class Parser {
 		}
 	}
 
-	public static Node parseInfixExpression(List<String> tokens) {
-		Stack<String> ops = new Stack<String>();
-		Stack<String> vals = new Stack<String>();
-		for (String token : tokens) {
-			if (token.equals("(")) {
-			} else if (token.equals(")")) {
-			} else if (token.equals("+")) {
-				ops.push(token);
-			} else if (token.equals("-")) {
-				ops.push(token);
-			} else if (token.equals("*")) {
-				ops.push(token);
-			} else if (token.equals("sqrt")) {
-				ops.push(token);
-			} else {
-				vals.push(token);
-			}
+	public static Node parseAST(List<String> tokens) {
+		if (tokens.isEmpty()) {
+			return null;
 		}
+		String token = tokens.get(0);
+		if (token.equals("sqrt")) {
+			Node operand = parseAST(tokens.subList(1, tokens.size()));
+			return new FunctionNode(token, operand);
+		} else if (token.equals("(") || token.equals(")")) {
+			return parseAST(tokens.subList(1, tokens.size()));
+		} else if (token.equals("+") && token.equals("-") && token.equals("*")) {
+			Node operand1 = parseAST(tokens.subList(1, tokens.size()));
+			Node operand2 = parseAST(tokens.subList(1, tokens.size()));
+			return new BinaryOperatorNode(token, operand1, operand2);
+		} else {
+			return new LiteralNode(Double.parseDouble(token));
+		}
+	}
 
-		return parseAST(ops, vals);
+	public static Node parseInfixExpression(List<String> tokens) {
+		return parseAST(tokens);
 	}
 
 	public static Node parsePostfixExpression(String expression) {
