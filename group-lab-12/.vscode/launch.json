@@ -1,0 +1,31 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - TestDriver2",
+            "request": "launch",
+            "mainClass": "app.TestDriver2",
+            "projectName": "group-lab-11"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - TestDriver2",
+            "request": "launch",
+            "mainClass": "TestDriver2"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - TestDriver",
+            "request": "launch",
+            "mainClass": "TestDriver",
+            "projectName": "group-lab-10_821e9e81"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - TestDriver",
+            "request": "launch",
+            "mainClass": "TestDriver",
+            "projectName": "group-lab-10_c86d0656"
+        }
+    ]
+}

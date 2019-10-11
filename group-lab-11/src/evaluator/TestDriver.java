@@ -10,5 +10,8 @@ public class TestDriver {
 
 		Node node3 = new BinaryOperatorNode("+", node, node2);
 		System.out.println(node3 + " = " + node3.toPostfixString() + " = " + node3.evaluate());
+
+		Node node4 = Parser.parseInfixExpression("( sqrt ( ( -3 * -6 ) ) - ( 2 * 4 ) )");
+		System.out.println(node4 + " = " + node4.toPostfixString() + " = " + node4.evaluate());
 	}
 }
