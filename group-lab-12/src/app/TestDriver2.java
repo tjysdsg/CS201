@@ -2,7 +2,6 @@ package app;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.SortedSet;
@@ -89,6 +88,7 @@ public class TestDriver2 {
 	}
 
 	public static void main(String[] args) {
+
 		Board b = new OurGroupBoard();
 
 		b.setupNewBoard(wordListFilename, 10, 10);

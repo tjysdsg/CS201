@@ -1,14 +1,12 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <projectDescription>
-  <name>group-lab-11</name>
-  <comment/>
-  <projects>
-    </projects>
+  <name>group-lab-12</name>
+  <comment />
+  <projects></projects>
   <buildSpec>
     <buildCommand>
       <name>org.eclipse.jdt.core.javabuilder</name>
-      <arguments>
-            </arguments>
+      <arguments></arguments>
     </buildCommand>
   </buildSpec>
   <natures>

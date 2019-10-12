@@ -73,6 +73,7 @@ public abstract class BoardBase implements Board {
 
     protected abstract boolean dictContains(String word);
 
+    // members
     protected char[][] grid;
     protected int n_rows, n_cols;
     protected String[] dictionary;
