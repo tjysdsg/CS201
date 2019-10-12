@@ -32,7 +32,11 @@ public interface WordFinder {
 		@Override
 		public int compareTo(Candidate o) {
 			// Descending order by number of letters played
-			return o.lettersPlayed.length() - this.lettersPlayed.length();
+			int n = o.lettersPlayed.length() - this.lettersPlayed.length();
+			if (n == 0) {
+				n = this.play.toString().compareTo(o.play.toString());
+			}
+			return n;
 		}
 
 		public boolean equals(Object o) {

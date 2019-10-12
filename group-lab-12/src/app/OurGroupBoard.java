@@ -21,6 +21,18 @@ public class OurGroupBoard extends BoardBase {
         int w_r = p.getRow();
         int w_c = p.getCol();
         boolean isVertical = p.isVertical();
+        // check if the word is out of bound
+        if (isVertical) {
+            int new_r = w_r + word.length() - 1;
+            if (new_r >= this.n_rows) {
+                return null;
+            }
+        } else {
+            int new_c = w_c + word.length() - 1;
+            if (new_c >= this.n_cols) {
+                return null;
+            }
+        }
         // make a copy of grid to check without actually modifying it
         char[] new_grid = new char[n_rows * n_cols];
         for (int i = 0; i < n_rows * n_cols; ++i) {

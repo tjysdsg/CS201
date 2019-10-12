@@ -25,6 +25,9 @@ public abstract class BoardBase implements Board {
     }
 
     public char getLetterAt(int row, int col) {
+        if (row >= this.n_rows || col >= this.n_cols) {
+            return '\u0000';
+        }
         return this.grid[row][col];
     }
 
