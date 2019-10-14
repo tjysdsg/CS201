@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.SortedSet;
+import java.util.Collections;
 
 public class TestDriver2 {
 	public static final String wordListFilename = "sowpods.txt";
@@ -40,11 +41,15 @@ public class TestDriver2 {
 		int rounds = 0;
 		LinkedList<String> pool = new LinkedList<>();
 
-		// TODO try different variations for letter pool to test your code
-		pool.addAll(Arrays.asList("a b c d e".split(" ")));
-		pool.addAll(Arrays.asList("f g h i j k l m n o p q r s t u v w".split(" ")));
-		pool.addAll(Arrays.asList("x y z".split(" ")));
-		pool.addAll(Arrays.asList("a e i o".split(" ")));
+		pool.addAll(Arrays.asList("a b c d e f g h i".split(" ")));
+		pool.addAll(Arrays.asList("a b c d e f g h i".split(" ")));
+		pool.addAll(Arrays.asList("a b c d e f g h i".split(" ")));
+		pool.addAll(Arrays.asList("a b c d e f g h i".split(" ")));
+		pool.addAll(Arrays.asList("a b c d e f g h i".split(" ")));
+		pool.addAll(Arrays.asList("a b c d e f g h i".split(" ")));
+		pool.addAll(Arrays.asList("a b c d e f g h i".split(" ")));
+		Collections.shuffle(pool);
+		System.out.println("The pool is:\n\t" + pool);
 
 		while (true) {
 			int playerIndex = rounds % players.size();
