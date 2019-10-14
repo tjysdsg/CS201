@@ -95,13 +95,11 @@ public class OurGroupBoard extends BoardBase {
 
         // remove overlapped characters from string
         if (overlappingPts.size() > 0) {
+            Collections.sort(overlappingPts);
             String result = "";
-            result += word.substring(0, overlappingPts.get(0)) + word.substring(overlappingPts.get(0) + 1);
-            for (int i = 1; i < overlappingPts.size(); ++i) {
-                result += word.substring(overlappingPts.get(i - 1) + 1, overlappingPts.get(i));
-            }
-            if (overlappingPts.size() > 1) {
-                result += word.substring(overlappingPts.get(overlappingPts.size() - 1) + 1);
+            int n_pts = overlappingPts.size();
+            for (int i = 0; i < n_pts - 1; ++i) {
+                result += word.substring(overlappingPts.get(i), overlappingPts.get(i + 1));
             }
             return result;
         } else {

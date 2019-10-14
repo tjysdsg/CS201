@@ -8,43 +8,20 @@ public class Group04WordFinder implements WordFinder {
         System.out.println("Initializing WordFinder, it may take a while...");
         In filein = new In(wordListFilename);
         List<String> dictionaryList = new LinkedList<String>(Arrays.asList(filein.readAllLines()));
-        word_map = new LinkedHashMap<String, LinkedList<String>>();
+        // TODO: optimized using List of indices of string as the value of word_map
+        word_map = new HashMap<String, Map<String, List<String>>>();
 
         int dict_len = dictionaryList.size();
         for (int i = 0; i < dict_len; ++i) {
             String word = dictionaryList.get(i);
             int word_len = word.length();
-            if (word_len > maxWordLength) {
-                dictionaryList.remove(i);
-                --dict_len;
-                --i;
-                continue;
-            }
-
-            // get unique characters that are alphabetically sorted
-            String char_string = getAlphaUnique(word);
-
-            // make a key value pair for every position of every word
-            for (int j = 0; j < word_len; ++j) {
-                // calculate key
-                String key = buildKey(word, j, char_string);
-
-                // if current key exists, append
-                if (word_map.containsKey(key)) {
-                    word_map.get(key).add(word);
-                } else { // otherwise create a list
-                    LinkedList<String> string_list = new LinkedList<String>();
-                    string_list.add(word);
-                    word_map.put(key, string_list);
+            if (word_len <= maxWordLength) {
+                // get unique characters that are alphabetically sorted
+                String char_list = getAlpha(word.toCharArray());
+                // make a key value pair for every position of every word
+                for (int j = 0; j < word_len; ++j) {
+                    appendToWordMap(word, char_list, word.charAt(j), j);
                 }
-            }
-            // finally, key "0" will contain all words
-            if (word_map.containsKey("0")) {
-                word_map.get("0").add(word);
-            } else { // otherwise create a list
-                LinkedList<String> string_list = new LinkedList<String>();
-                string_list.add(word);
-                word_map.put("0", string_list);
             }
         }
         System.out.println("Initialized WordFinder");
@@ -56,21 +33,50 @@ public class Group04WordFinder implements WordFinder {
         int n_cols = board.getColumns();
         // sorted letters
         Collections.sort(lettersInHand);
-        String letters = getAlphaUnique(String.join("", lettersInHand).toCharArray());
-        //
+        Set<String> letter_set = new HashSet<String>(lettersInHand);
+
+        // find possible keys that at most contains all letters in lettersInHand
+        Map<String, List<String>> possible_entries = new HashMap<String, List<String>>();
+        for (Map.Entry<String, Map<String, List<String>>> e : word_map.entrySet()) {
+            Set<String> letter_set_copy = new HashSet<String>(letter_set);
+            boolean possible = true;
+            String k = e.getKey();
+            for (int idx = 0; idx < k.length(); ++idx) {
+                if (!letter_set_copy.contains("" + k.charAt(idx))) {
+                    possible = false;
+                    break;
+                }
+                letter_set_copy.remove("" + k.charAt(idx));
+            }
+            if (possible) {
+                for (Map.Entry<String, List<String>> e1 : e.getValue().entrySet()) {
+                    possible_entries.put(e1.getKey(), e1.getValue());
+                }
+            }
+        }
+        // main loop
         for (int r = 0; r < n_rows; ++r) {
             for (int c = 0; c < n_cols; ++c) {
                 // check horizontally
-                List<String> words = word_map.get("0");
+                // there is no point checking horizontally if the start column is one of the
+                // last two columns
+                if (c >= n_cols - 2) {
+                    continue;
+                }
+
+                List<String> words = new LinkedList<String>();
+                for (Map.Entry<String, List<String>> e : possible_entries.entrySet()) {
+                    words.addAll(e.getValue());
+                }
                 Set<String> current_candidates = new HashSet<>(words);
                 Set<String> prev_candidates = new HashSet<String>(current_candidates);
                 for (int offset = 1; offset < n_cols; ++offset) {
-                    char curr_char = board.getLetterAt(r, c + offset);
-                    if (curr_char == '\u0000') {
+                    if (c + offset >= n_cols) {
                         break;
                     }
-                    String key = buildKey(curr_char, offset, letters);
-                    List<String> curr_words = word_map.get(key);
+                    char curr_char = board.getLetterAt(r, c + offset);
+                    String key = "" + curr_char + offset;
+                    List<String> curr_words = possible_entries.get(key);
                     if (curr_words == null) {
                         break;
                     }
@@ -85,6 +91,9 @@ public class Group04WordFinder implements WordFinder {
                 // add new candidate
                 for (Iterator<String> iter = current_candidates.iterator(); iter.hasNext();) {
                     String w = iter.next();
+                    if (w.length() <= 1) {
+                        continue;
+                    }
                     Play play = new Play(r, c, w, false);
                     String placed_word = board.playWord(play, true);
                     // it is still possible to be an illegal word, since we haven't check the
@@ -93,18 +102,27 @@ public class Group04WordFinder implements WordFinder {
                         continue;
                     }
                     result.add(new Candidate(play, placed_word));
+                    // if the length of placed_word is the the width of a row, it is definitely the
+                    // best horizontal option
+                    if (placed_word.length() == n_cols) {
+                        break;
+                    }
                 }
                 // check vertically
-                words = word_map.get("0");
+                // there is no point checking vertically if the start row is one of the
+                // last two rows
+                if (r >= n_rows - 2) {
+                    continue;
+                }
                 current_candidates = new HashSet<>(words);
                 prev_candidates = new HashSet<String>(current_candidates);
                 for (int offset = 1; offset < n_rows; ++offset) {
-                    char curr_char = board.getLetterAt(r + offset, c);
-                    if (curr_char == '\u0000') {
+                    if (r + offset >= n_rows) {
                         break;
                     }
-                    String key = buildKey(curr_char, offset, letters);
-                    List<String> curr_words = word_map.get(key);
+                    char curr_char = board.getLetterAt(r + offset, c);
+                    String key = "" + curr_char + offset;
+                    List<String> curr_words = possible_entries.get(key);
                     if (curr_words == null) {
                         break;
                     }
@@ -119,6 +137,9 @@ public class Group04WordFinder implements WordFinder {
                 // add new candidate
                 for (Iterator<String> iter = current_candidates.iterator(); iter.hasNext();) {
                     String w = iter.next();
+                    if (w.length() <= 1) {
+                        continue;
+                    }
                     Play play = new Play(r, c, w, true);
                     String placed_word = board.playWord(play, true);
                     // it is still possible to be an illegal word, since we haven't check the
@@ -127,6 +148,11 @@ public class Group04WordFinder implements WordFinder {
                         continue;
                     }
                     result.add(new Candidate(play, placed_word));
+                    // if the length of placed_word is the the height of a column, it is definitely
+                    // the best vertical option
+                    if (placed_word.length() == n_rows) {
+                        break;
+                    }
                 }
             }
         }
@@ -134,45 +160,40 @@ public class Group04WordFinder implements WordFinder {
     }
 
     // get unique characters that are alphabetically sorted
-    private String getAlphaUnique(String word) {
-        SortedSet<Character> char_set = new TreeSet<Character>();
-        for (int l = 0; l < word.length(); ++l) {
-            char_set.add(word.charAt(l));
-        }
-        String char_string = "";
-        for (Iterator<Character> iter = char_set.iterator(); iter.hasNext();) {
-            char ch = iter.next();
-            char_string += "" + ch;
-        }
-        return char_string;
-    }
-
-    // get unique characters that are alphabetically sorted
-    private String getAlphaUnique(char[] char_seq) {
-        SortedSet<Character> char_set = new TreeSet<Character>();
+    private String getAlpha(char[] char_seq) {
+        List<Character> char_list = new LinkedList<Character>();
         for (int l = 0; l < char_seq.length; ++l) {
-            char_set.add(char_seq[l]);
+            char_list.add(char_seq[l]);
         }
         String char_string = "";
-        for (Iterator<Character> iter = char_set.iterator(); iter.hasNext();) {
+        Collections.sort(char_list);
+        for (Iterator<Character> iter = char_list.iterator(); iter.hasNext();) {
             char ch = iter.next();
             char_string += "" + ch;
         }
         return char_string;
     }
 
-    private String buildKey(String word, int index, String other) {
-        if (word.charAt(index) == '0') {
-            return "0";
+    private void appendToWordMap(String word, String char_list, char ch, int ch_i) {
+        String outer_key = char_list;
+        String inner_key = "" + ch + ch_i;
+        Map<String, List<String>> outer_map = word_map.get(outer_key);
+        if (outer_map == null) {
+            outer_map = new HashMap<String, List<String>>();
+            LinkedList<String> string_list = new LinkedList<String>();
+            string_list.add(word);
+            outer_map.put(inner_key, string_list);
+            word_map.put(outer_key, outer_map);
+        } else {
+            // if current key exists, append
+            if (outer_map.containsKey(inner_key)) {
+                outer_map.get(inner_key).add(word);
+            } else { // otherwise create a list
+                LinkedList<String> string_list = new LinkedList<String>();
+                string_list.add(word);
+                outer_map.put(inner_key, string_list);
+            }
         }
-        return "" + word.charAt(index) + "_" + index + "_" + other;
-    }
-
-    private String buildKey(char ch, int index, String other) {
-        if (ch == '0') {
-            return "0";
-        }
-        return "" + ch + "_" + index + "_" + other;
     }
 
     // NOTE: a is modified
@@ -180,5 +201,5 @@ public class Group04WordFinder implements WordFinder {
         a.retainAll(b);
     }
 
-    private LinkedHashMap<String, LinkedList<String>> word_map;
+    private Map<String, Map<String, List<String>>> word_map;
 }

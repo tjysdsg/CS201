@@ -54,7 +54,7 @@ public abstract class BoardBase implements Board {
         boolean started = false;
         for (int i = 0; i < charSeq.length; ++i) {
             if (started) {
-                if (charSeq[i] == '0') {
+                if (charSeq[i] == '0' || i == charSeq.length - 1) {
                     started = false;
                     results.add(s);
                     s = new String();
