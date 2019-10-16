@@ -71,6 +71,12 @@ public class OurGroupBoard implements Board {
         if (w_c - 1 >= 0) {
             cols2Check.add(w_c - 1);
         }
+        if (w_r + 1 < this.n_rows) {
+            rows2Check.add(w_r + 1);
+        }
+        if (w_c + 1 < this.n_cols) {
+            cols2Check.add(w_c + 1);
+        }
         rows2Check.add(w_r);
         cols2Check.add(w_c);
         for (int i = 1; i < word.length() + 1; ++i) {
@@ -192,10 +198,13 @@ public class OurGroupBoard implements Board {
         boolean started = false;
         for (int i = 0; i < charSeq.length; ++i) {
             if (started) {
-                if (charSeq[i] == '0' || i == charSeq.length - 1) {
+                if (charSeq[i] == '0') {
                     started = false;
                     results.add(s);
                     s = new String();
+                } else if (i == charSeq.length - 1) {
+                    s += charSeq[i];
+                    results.add(s);
                 } else {
                     s += "" + charSeq[i];
                 }

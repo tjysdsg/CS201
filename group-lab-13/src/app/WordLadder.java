@@ -1,7 +1,7 @@
 package app;
 
 import java.util.List;
-import java.util.LinkedList;
+import java.util.ArrayList;;
 
 public class WordLadder {
     public WordLadder() {
@@ -13,7 +13,7 @@ public class WordLadder {
 
     public void setup(String[] dictionary, int word_len) {
         int dict_len = dictionary.length;
-        List<String> dict = new LinkedList<String>();
+        List<String> dict = new ArrayList<String>();
         for (int i = 0; i < dict_len; ++i) {
             String s = dictionary[i];
             if (s.length() == word_len) {

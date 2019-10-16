@@ -90,8 +90,8 @@ public class TestDriver2 {
 
 	public static void main(String[] args) {
 		Board b = new OurGroupBoard();
-
 		b.setupNewBoard(wordListFilename, 10, 10);
+
 		b.playWord(new Play(4, 4, "duke", false), false);
 
 		ArrayList<Player> players = new ArrayList<>();
