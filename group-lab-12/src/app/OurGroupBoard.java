@@ -61,15 +61,28 @@ public class OurGroupBoard implements Board {
                 return null;
             }
         }
-        // check the part of the board that has been modified
+        // check the part of the board that has been modified, and the neighbor
+        // rows/cols
         ArrayList<Integer> rows2Check = new ArrayList<Integer>();
         ArrayList<Integer> cols2Check = new ArrayList<Integer>();
+        if (w_r - 1 >= 0) {
+            rows2Check.add(w_r - 1);
+        }
+        if (w_c - 1 >= 0) {
+            cols2Check.add(w_c - 1);
+        }
         rows2Check.add(w_r);
         cols2Check.add(w_c);
-        for (int i = 1; i < word.length(); ++i) {
+        for (int i = 1; i < word.length() + 1; ++i) {
             if (isVertical) {
+                if (w_r + i >= this.n_rows) {
+                    break;
+                }
                 rows2Check.add(w_r + i);
             } else {
+                if (w_c + i >= this.n_cols) {
+                    break;
+                }
                 cols2Check.add(w_c + i);
             }
         }

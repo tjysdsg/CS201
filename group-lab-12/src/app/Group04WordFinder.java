@@ -27,10 +27,12 @@ public class Group04WordFinder implements WordFinder {
     }
 
     public SortedSet<Candidate> findCandidates(Board board, List<String> lettersInHand) {
+        System.out.print("Current hand: ");
+        System.out.println(lettersInHand);
         SortedSet<Candidate> result = new TreeSet<Candidate>();
         int n_rows = board.getRows();
         int n_cols = board.getColumns();
-        Collections.sort(lettersInHand);
+        Collections.sort(lettersInHand); // necessary
 
         for (int r = 0; r < n_rows; ++r) {
             for (int c = 0; c < n_cols; ++c) {
@@ -49,22 +51,7 @@ public class Group04WordFinder implements WordFinder {
                             continue;
                         for (int si : string_indices) {
                             Play p = new Play(r - i, c, this.dictionary[si], true);
-                            String word_played = board.playWord(p, true);
-                            boolean legal = false;
-                            if (word_played != null && word_played.length() > 0) {
-                                legal = true;
-                            } else
-                                continue;
-                            for (int j = 0; j < word_played.length(); ++j) {
-                                int idx = letters.indexOf(word_played.charAt(j));
-                                if (idx == -1) {
-                                    legal = false;
-                                    break;
-                                }
-                                letters.remove(idx);
-                            }
-                            if (legal)
-                                result.add(new Candidate(p, word_played));
+                            getCandidate(board, p, letters, result);
                         }
                     }
                     // check horizontal words
@@ -79,25 +66,10 @@ public class Group04WordFinder implements WordFinder {
                             continue;
                         for (int si : string_indices) {
                             Play p = new Play(r, c - i, this.dictionary[si], true);
-                            String word_played = board.playWord(p, true);
-                            boolean legal = false;
-                            if (word_played != null && word_played.length() > 0) {
-                                legal = true;
-                            } else
-                                continue;
-                            for (int j = 0; j < word_played.length(); ++j) {
-                                int idx = letters.indexOf(word_played.charAt(j));
-                                if (idx == -1) {
-                                    legal = false;
-                                    break;
-                                }
-                            }
-                            if (legal)
-                                result.add(new Candidate(p, word_played));
+                            getCandidate(board, p, letters, result);
                         }
                     }
                 } else {
-                    int max_len = 0;
                     // check neighbor
                     List<int[]> neighbors = Arrays
                             .asList(new int[][] { { r - 1, c }, { r + 1, c }, { r, c - 1 }, { r, c + 1 } });
@@ -108,62 +80,55 @@ public class Group04WordFinder implements WordFinder {
                             for (Map.Entry<String, List<Integer>> e : this.word_map.entrySet()) {
                                 for (int idx : e.getValue()) {
                                     String w = this.dictionary[idx];
-                                    if (w.length() <= max_len) {
-                                        continue;
-                                    } else {
-                                        Play p1 = new Play(r1, c1, w, true);
-                                        Play p2 = new Play(r1, c1, w, false);
-                                        String w1 = board.playWord(p1, true);
-                                        String w2 = board.playWord(p2, true);
-                                        boolean legal = false;
-                                        // make copy
-                                        List<Character> letters = new LinkedList<Character>();
-                                        for (int s = 0; s < lettersInHand.size(); ++s) {
-                                            letters.add(lettersInHand.get(s).toCharArray()[0]);
-                                        }
-                                        if (w1 != null && w1.length() > 0) {
-                                            legal = true;
-                                        } else
-                                            continue;
-                                        for (int j = 0; j < w1.length(); ++j) {
-                                            int ix = letters.indexOf(w1.charAt(j));
-                                            if (ix == -1) {
-                                                legal = false;
-                                                break;
-                                            }
-                                            letters.remove(ix);
-                                        }
-                                        if (legal)
-                                            result.add(new Candidate(p1, w1));
-                                        // make copy
-                                        letters = new LinkedList<Character>();
-                                        for (int s = 0; s < lettersInHand.size(); ++s) {
-                                            letters.add(lettersInHand.get(s).toCharArray()[0]);
-                                        }
-                                        if (w2 != null && w2.length() > 0) {
-                                            legal = true;
-                                        } else
-                                            continue;
-                                        for (int j = 0; j < w2.length(); ++j) {
-                                            int ix = letters.indexOf(w2.charAt(j));
-                                            if (ix == -1) {
-                                                legal = false;
-                                                break;
-                                            }
-                                            letters.remove(ix);
-                                        }
-                                        if (legal)
-                                            result.add(new Candidate(p2, w2));
+                                    Play p1 = new Play(r1, c1, w, true);
+                                    Play p2 = new Play(r1, c1, w, false);
+                                    // make copy
+                                    List<Character> letters = new LinkedList<Character>();
+                                    for (int s = 0; s < lettersInHand.size(); ++s) {
+                                        letters.add(lettersInHand.get(s).toCharArray()[0]);
                                     }
+                                    getCandidate(board, p1, letters, result);
+                                    // make copy
+                                    letters = new LinkedList<Character>();
+                                    for (int s = 0; s < lettersInHand.size(); ++s) {
+                                        letters.add(lettersInHand.get(s).toCharArray()[0]);
+                                    }
+                                    getCandidate(board, p2, letters, result);
                                 }
                             }
                         }
                     }
                 }
             }
-
         }
+        this.max_len = 0;
         return result;
+    }
+
+    // letters and result are modified
+    private void getCandidate(Board board, Play p, List<Character> letters, SortedSet<Candidate> result) {
+        String word = p.getWord();
+        if (word.length() <= this.max_len) {
+            return;
+        }
+        String word_played = board.playWord(p, true);
+        boolean legal = false;
+        if (word_played != null && word_played.length() > 0) {
+            legal = true;
+            for (int j = 0; j < word_played.length(); ++j) {
+                int idx = letters.indexOf(word_played.charAt(j));
+                if (idx == -1) {
+                    legal = false;
+                    break;
+                } else {
+                    letters.remove(idx);
+                }
+            }
+            if (legal && this.max_len < word_played.length()) {
+                this.max_len = word_played.length();
+                result.add(new Candidate(p, word_played));
+            }
+        }
     }
 
     // get characters that are alphabetically sorted
@@ -219,4 +184,5 @@ public class Group04WordFinder implements WordFinder {
 
     private Map<String, List<Integer>> word_map;
     private String[] dictionary;
+    private int max_len;
 }

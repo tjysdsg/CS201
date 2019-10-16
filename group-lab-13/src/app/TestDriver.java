@@ -23,20 +23,8 @@ public class TestDriver {
 		right.setLeftChild(right3);
 		right.setRightChild(right4);
 
-		// The following insert is out of order
-		// BinaryTreeNode.put(tree, 0.5, "1/2");
-
 		// System.out.println(tree.heapOrdered());
 		System.out.println(tree.balanced());
 		System.out.println(tree1.balanced());
-
-		// Look up 4.0 in the tree
-		// System.out.println("get 4.0 = " + BinaryTreeNode.get(tree, 4.0));
-
-		// Do an inorder walk and print the keys (will be in alphabetical order)
-		// tree.printInorder();
-
-		// Print the whole tree out
-		// tree.printTree(0);
 	}
 }

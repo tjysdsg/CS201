@@ -96,7 +96,6 @@ public class TestDriver2 {
 
 		ArrayList<Player> players = new ArrayList<>();
 
-		// TODO create an instance of your WordFinder implementation here
 		players.add(new Player(new Group04WordFinder()));
 		for (Player p : players) {
 			p.getWordFinder().setupIndex(wordListFilename, 10);
