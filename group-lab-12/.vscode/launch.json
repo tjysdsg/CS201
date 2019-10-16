@@ -5,21 +5,7 @@
             "name": "CodeLens (Launch) - TestDriver2",
             "request": "launch",
             "mainClass": "app.TestDriver2",
-            "projectName": "group-lab-12_dcddd2f6"
-        },
-        {
-            "type": "java",
-            "name": "CodeLens (Launch) - TestDriver2",
-            "request": "launch",
-            "mainClass": "app.TestDriver2",
             "projectName": "group-lab-11"
-        },
-        {
-            "type": "java",
-            "name": "CodeLens (Launch) - TestDriver2",
-            "request": "launch",
-            "mainClass": "app.TestDriver2",
-            "projectName": "group-lab-12"
         }
     ]
 }
