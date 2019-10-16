@@ -2,10 +2,10 @@ package app;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.SortedSet;
-import java.util.Collections;
 
 public class TestDriver2 {
 	public static final String wordListFilename = "sowpods.txt";
@@ -41,15 +41,11 @@ public class TestDriver2 {
 		int rounds = 0;
 		LinkedList<String> pool = new LinkedList<>();
 
-		pool.addAll(Arrays.asList("a b c d e f g h i".split(" ")));
-		pool.addAll(Arrays.asList("a b c d e f g h i".split(" ")));
-		pool.addAll(Arrays.asList("a b c d e f g h i".split(" ")));
-		pool.addAll(Arrays.asList("a b c d e f g h i".split(" ")));
-		pool.addAll(Arrays.asList("a b c d e f g h i".split(" ")));
-		pool.addAll(Arrays.asList("a b c d e f g h i".split(" ")));
-		pool.addAll(Arrays.asList("a b c d e f g h i".split(" ")));
-		Collections.shuffle(pool);
-		System.out.println("The pool is:\n\t" + pool);
+		// TODO try different variations for letter pool to test your code
+		pool.addAll(Arrays.asList("a b c d e".split(" ")));
+		pool.addAll(Arrays.asList("f g h i j k l m n o p q r s t u v w".split(" ")));
+		pool.addAll(Arrays.asList("x y z".split(" ")));
+		pool.addAll(Arrays.asList("a e i o".split(" ")));
 
 		while (true) {
 			int playerIndex = rounds % players.size();
@@ -93,7 +89,6 @@ public class TestDriver2 {
 	}
 
 	public static void main(String[] args) {
-
 		Board b = new OurGroupBoard();
 
 		b.setupNewBoard(wordListFilename, 10, 10);
@@ -101,6 +96,7 @@ public class TestDriver2 {
 
 		ArrayList<Player> players = new ArrayList<>();
 
+		// TODO create an instance of your WordFinder implementation here
 		players.add(new Player(new Group04WordFinder()));
 		for (Player p : players) {
 			p.getWordFinder().setupIndex(wordListFilename, 10);

@@ -8,7 +8,7 @@ public class Group04WordFinder implements WordFinder {
         System.out.println("Initializing WordFinder, it may take a while...");
         In filein = new In(wordListFilename);
         this.dictionary = filein.readAllLines();
-        word_map = new HashMap<String, Map<String, List<Integer>>>();
+        word_map = new HashMap<String, List<Integer>>();
 
         int dict_len = this.dictionary.length;
         for (int i = 0; i < dict_len; ++i) {
@@ -30,136 +30,143 @@ public class Group04WordFinder implements WordFinder {
         SortedSet<Candidate> result = new TreeSet<Candidate>();
         int n_rows = board.getRows();
         int n_cols = board.getColumns();
-        // sorted letters
         Collections.sort(lettersInHand);
-        Set<String> letter_set = new HashSet<String>(lettersInHand);
 
-        // find possible keys that at most contains all letters in lettersInHand
-        // BUG: this won't cover candidates that have letters that are not in hand, but
-        // still can be legally placed. Because it uses the letters already on the board
-        // to form a word, but this algorithm is good enough at finding candidates
-        // without losing major performance, so ignored
-        Map<String, List<Integer>> possible_entries = new HashMap<String, List<Integer>>();
-        for (Map.Entry<String, Map<String, List<Integer>>> e : word_map.entrySet()) {
-            Set<String> letter_set_copy = new HashSet<String>(letter_set);
-            boolean possible = true;
-            String k = e.getKey();
-            for (int idx = 0; idx < k.length(); ++idx) {
-                if (!letter_set_copy.contains("" + k.charAt(idx))) {
-                    possible = false;
-                    break;
-                }
-                letter_set_copy.remove("" + k.charAt(idx));
-            }
-            if (possible) {
-                for (Map.Entry<String, List<Integer>> e1 : e.getValue().entrySet()) {
-                    possible_entries.put(e1.getKey(), e1.getValue());
-                }
-            }
-        }
-        List<Integer> words = new LinkedList<Integer>();
-        for (Map.Entry<String, List<Integer>> e : possible_entries.entrySet()) {
-            words.addAll(e.getValue());
-        }
-        // main loop, brute force, check every starting coordinate for a word (except
-        // the last row when vertical and the last column when horizontal)
         for (int r = 0; r < n_rows; ++r) {
             for (int c = 0; c < n_cols; ++c) {
-                // check horizontally
-                // there is no point checking horizontally if the start column is one of the
-                // last two columns
-                if (c >= n_cols - 2) {
-                    continue;
-                }
-
-                Set<Integer> current_candidates = new HashSet<>(words);
-                Set<Integer> prev_candidates = new HashSet<>(current_candidates);
-                for (int offset = 1; c + offset >= n_cols; ++offset) {
-                    char curr_char = board.getLetterAt(r, c + offset);
-                    String key = "" + curr_char + offset;
-                    List<Integer> curr_words = possible_entries.get(key);
-                    if (curr_words == null) {
-                        break;
+                char ch = board.getLetterAt(r, c);
+                if (ch != '0') {
+                    List<Character> letters;
+                    // check vertical words
+                    for (int i = 0; i <= r; ++i) {
+                        // make copy
+                        letters = new LinkedList<Character>();
+                        for (int s = 0; s < lettersInHand.size(); ++s) {
+                            letters.add(lettersInHand.get(s).toCharArray()[0]);
+                        }
+                        List<Integer> string_indices = this.word_map.get(buildKey(letters, ch, i));
+                        if (string_indices == null)
+                            continue;
+                        for (int si : string_indices) {
+                            Play p = new Play(r - i, c, this.dictionary[si], true);
+                            String word_played = board.playWord(p, true);
+                            boolean legal = false;
+                            if (word_played != null && word_played.length() > 0) {
+                                legal = true;
+                            } else
+                                continue;
+                            for (int j = 0; j < word_played.length(); ++j) {
+                                int idx = letters.indexOf(word_played.charAt(j));
+                                if (idx == -1) {
+                                    legal = false;
+                                    break;
+                                }
+                                letters.remove(idx);
+                            }
+                            if (legal)
+                                result.add(new Candidate(p, word_played));
+                        }
                     }
-                    current_candidates = new HashSet<>(curr_words);
-                    intersect(current_candidates, prev_candidates);
-                    if (current_candidates.isEmpty()) {
-                        current_candidates = prev_candidates;
-                        break;
+                    // check horizontal words
+                    for (int i = 0; i <= c; ++i) {
+                        // make copy
+                        letters = new LinkedList<Character>();
+                        for (int s = 0; s < lettersInHand.size(); ++s) {
+                            letters.add(lettersInHand.get(s).toCharArray()[0]);
+                        }
+                        List<Integer> string_indices = this.word_map.get(buildKey(letters, ch, i));
+                        if (string_indices == null)
+                            continue;
+                        for (int si : string_indices) {
+                            Play p = new Play(r, c - i, this.dictionary[si], true);
+                            String word_played = board.playWord(p, true);
+                            boolean legal = false;
+                            if (word_played != null && word_played.length() > 0) {
+                                legal = true;
+                            } else
+                                continue;
+                            for (int j = 0; j < word_played.length(); ++j) {
+                                int idx = letters.indexOf(word_played.charAt(j));
+                                if (idx == -1) {
+                                    legal = false;
+                                    break;
+                                }
+                            }
+                            if (legal)
+                                result.add(new Candidate(p, word_played));
+                        }
                     }
-                    prev_candidates = new HashSet<>(current_candidates);
-                }
-                // add new candidate
-                for (Iterator<Integer> iter = current_candidates.iterator(); iter.hasNext();) {
-                    Integer wi = iter.next();
-                    String w = this.dictionary[wi];
-                    if (w.length() <= 1) {
-                        continue;
-                    }
-                    Play play = new Play(r, c, w, false);
-                    String placed_word = board.playWord(play, true);
-                    // it is still possible to be an illegal word, since we haven't check the
-                    // letters after `offset`
-                    if (placed_word == null) {
-                        continue;
-                    }
-                    result.add(new Candidate(play, placed_word));
-                    // if the length of placed_word is the the width of a row, it is definitely the
-                    // best horizontal option
-                    if (placed_word.length() == n_cols) {
-                        break;
-                    }
-                }
-                // check vertically
-                // there is no point checking vertically if the start row is one of the
-                // last two rows
-                if (r >= n_rows - 2) {
-                    continue;
-                }
-                current_candidates = new HashSet<>(words);
-                prev_candidates = new HashSet<>(current_candidates);
-                for (int offset = 1; r + offset >= n_rows; ++offset) {
-                    char curr_char = board.getLetterAt(r + offset, c);
-                    String key = "" + curr_char + offset;
-                    List<Integer> curr_words = possible_entries.get(key);
-                    if (curr_words == null) {
-                        break;
-                    }
-                    current_candidates = new HashSet<>(curr_words);
-                    intersect(current_candidates, prev_candidates);
-                    if (current_candidates.isEmpty()) {
-                        current_candidates = prev_candidates;
-                        break;
-                    }
-                    prev_candidates = new HashSet<>(current_candidates);
-                }
-                // add new candidate
-                for (Iterator<Integer> iter = current_candidates.iterator(); iter.hasNext();) {
-                    int wi = iter.next();
-                    String w = this.dictionary[wi];
-                    if (w.length() <= 1) {
-                        continue;
-                    }
-                    Play play = new Play(r, c, w, true);
-                    String placed_word = board.playWord(play, true);
-                    // it is still possible to be an illegal word, since we haven't check the
-                    // letters after `offset`
-                    if (placed_word == null) {
-                        continue;
-                    }
-                    result.add(new Candidate(play, placed_word));
-                    // if the length of placed_word is the the height of a column, it is definitely
-                    // the best vertical option
-                    if (placed_word.length() == n_rows) {
-                        break;
+                } else {
+                    int max_len = 0;
+                    // check neighbor
+                    List<int[]> neighbors = Arrays
+                            .asList(new int[][] { { r - 1, c }, { r + 1, c }, { r, c - 1 }, { r, c + 1 } });
+                    for (int[] rc : neighbors) {
+                        int r1 = rc[0];
+                        int c1 = rc[1];
+                        if (r1 >= 0 && r1 < n_rows && c1 >= 0 && c1 < n_cols && board.getLetterAt(r1, c1) != '0') {
+                            for (Map.Entry<String, List<Integer>> e : this.word_map.entrySet()) {
+                                for (int idx : e.getValue()) {
+                                    String w = this.dictionary[idx];
+                                    if (w.length() <= max_len) {
+                                        continue;
+                                    } else {
+                                        Play p1 = new Play(r1, c1, w, true);
+                                        Play p2 = new Play(r1, c1, w, false);
+                                        String w1 = board.playWord(p1, true);
+                                        String w2 = board.playWord(p2, true);
+                                        boolean legal = false;
+                                        // make copy
+                                        List<Character> letters = new LinkedList<Character>();
+                                        for (int s = 0; s < lettersInHand.size(); ++s) {
+                                            letters.add(lettersInHand.get(s).toCharArray()[0]);
+                                        }
+                                        if (w1 != null && w1.length() > 0) {
+                                            legal = true;
+                                        } else
+                                            continue;
+                                        for (int j = 0; j < w1.length(); ++j) {
+                                            int ix = letters.indexOf(w1.charAt(j));
+                                            if (ix == -1) {
+                                                legal = false;
+                                                break;
+                                            }
+                                            letters.remove(ix);
+                                        }
+                                        if (legal)
+                                            result.add(new Candidate(p1, w1));
+                                        // make copy
+                                        letters = new LinkedList<Character>();
+                                        for (int s = 0; s < lettersInHand.size(); ++s) {
+                                            letters.add(lettersInHand.get(s).toCharArray()[0]);
+                                        }
+                                        if (w2 != null && w2.length() > 0) {
+                                            legal = true;
+                                        } else
+                                            continue;
+                                        for (int j = 0; j < w2.length(); ++j) {
+                                            int ix = letters.indexOf(w2.charAt(j));
+                                            if (ix == -1) {
+                                                legal = false;
+                                                break;
+                                            }
+                                            letters.remove(ix);
+                                        }
+                                        if (legal)
+                                            result.add(new Candidate(p2, w2));
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
+
         }
         return result;
     }
 
-    // get unique characters that are alphabetically sorted
+    // get characters that are alphabetically sorted
     private String getAlpha(char[] char_seq) {
         List<Character> char_list = new LinkedList<Character>();
         for (int l = 0; l < char_seq.length; ++l) {
@@ -174,33 +181,42 @@ public class Group04WordFinder implements WordFinder {
         return char_string;
     }
 
+    private String buildKey(String char_list, char ch, int ch_i) {
+        int i = char_list.indexOf(ch);
+        String other_letters;
+        if (i != -1)
+            other_letters = char_list.substring(0, i) + char_list.substring(i);
+        else
+            other_letters = char_list;
+        String key = ch + "_" + ch_i + "_" + other_letters;
+        return key;
+    }
+
+    private String buildKey(List<Character> char_list, char ch, int ch_i) {
+        String other_letters = "";
+        int i = char_list.indexOf(ch);
+        if (i != -1) {
+            char_list.remove(i);
+        }
+        for (char c : char_list) {
+            other_letters += c;
+        }
+        String key = ch + "_" + ch_i + "_" + other_letters;
+        return key;
+    }
+
     private void appendToWordMap(int word_index, String char_list, char ch, int ch_i) {
-        String outer_key = char_list;
-        String inner_key = "" + ch + ch_i;
-        Map<String, List<Integer>> outer_map = word_map.get(outer_key);
-        if (outer_map == null) {
-            outer_map = new HashMap<String, List<Integer>>();
-            LinkedList<Integer> l = new LinkedList<Integer>();
-            l.add(word_index);
-            outer_map.put(inner_key, l);
-            word_map.put(outer_key, outer_map);
-        } else {
-            // if current key exists, append
-            if (outer_map.containsKey(inner_key)) {
-                outer_map.get(inner_key).add(word_index);
-            } else { // otherwise create a list
-                LinkedList<Integer> string_list = new LinkedList<Integer>();
-                string_list.add(word_index);
-                outer_map.put(inner_key, string_list);
-            }
+        String key = this.buildKey(char_list, ch, ch_i);
+        // if current key exists, append
+        if (this.word_map.containsKey(key)) {
+            this.word_map.get(key).add(word_index);
+        } else { // otherwise create a list
+            LinkedList<Integer> string_list = new LinkedList<Integer>();
+            string_list.add(word_index);
+            this.word_map.put(key, string_list);
         }
     }
 
-    // NOTE: a is modified
-    private void intersect(Set<Integer> a, Set<Integer> b) {
-        a.retainAll(b);
-    }
-
-    private Map<String, Map<String, List<Integer>>> word_map;
+    private Map<String, List<Integer>> word_map;
     private String[] dictionary;
 }

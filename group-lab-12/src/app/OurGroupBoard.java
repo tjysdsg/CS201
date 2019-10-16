@@ -98,11 +98,12 @@ public class OurGroupBoard implements Board {
         // remove overlapped characters from string
         if (overlappingPts.size() > 0) {
             Collections.sort(overlappingPts);
-            String result = "";
+            String result = word.substring(0, overlappingPts.get(0));
             int n_pts = overlappingPts.size();
             for (int i = 0; i < n_pts - 1; ++i) {
-                result += word.substring(overlappingPts.get(i), overlappingPts.get(i + 1));
+                result += word.substring(overlappingPts.get(i) + 1, overlappingPts.get(i + 1));
             }
+            result += word.substring(overlappingPts.get(n_pts - 1) + 1);
             return result;
         } else {
             return word;
