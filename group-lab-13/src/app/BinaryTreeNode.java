@@ -74,6 +74,10 @@ public class BinaryTreeNode<T extends Comparable<T>> {
 		return x;
 	}
 
+	public void printTree() {
+		printTree(0);
+	}
+
 	public void printTree(int indentLevel) {
 		for (int i = 0; i < indentLevel; i++) {
 			System.out.print("  ");

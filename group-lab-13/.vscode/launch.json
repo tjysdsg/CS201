@@ -2,6 +2,27 @@
     "configurations": [
         {
             "type": "java",
+            "name": "CodeLens (Launch) - Problem_4_4_36",
+            "request": "launch",
+            "mainClass": "app.Problem_4_4_36",
+            "projectName": "group-lab-12"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - Problem_4_4_35",
+            "request": "launch",
+            "mainClass": "app.Problem_4_4_35",
+            "projectName": "group-lab-12"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - Problem_4_4_35",
+            "request": "launch",
+            "mainClass": "src.app.Problem_4_4_35",
+            "projectName": "group-lab-13_821e9e84"
+        },
+        {
+            "type": "java",
             "name": "CodeLens (Launch) - TestDriver",
             "request": "launch",
             "mainClass": "app.TestDriver",
