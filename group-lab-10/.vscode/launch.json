@@ -5,6 +5,20 @@
             "name": "CodeLens (Launch) - TestDriver",
             "request": "launch",
             "mainClass": "TestDriver",
+            "projectName": "group-lab-10"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - TestDriver",
+            "request": "launch",
+            "mainClass": "TestDriver",
+            "projectName": "group-lab-10_dcddd2f4"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - TestDriver",
+            "request": "launch",
+            "mainClass": "TestDriver",
             "projectName": "group-lab-10_821e9e81"
         },
         {

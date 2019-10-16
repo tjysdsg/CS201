@@ -36,6 +36,10 @@ public class Group04WordFinder implements WordFinder {
         Set<String> letter_set = new HashSet<String>(lettersInHand);
 
         // find possible keys that at most contains all letters in lettersInHand
+        // BUG: this won't cover candidates that have letters that are not in hand, but
+        // still can be legally placed. Because it uses the letters already on the board
+        // to form a word, but this algorithm is good enough at finding candidates
+        // without losing major performance, so ignored
         Map<String, List<String>> possible_entries = new HashMap<String, List<String>>();
         for (Map.Entry<String, Map<String, List<String>>> e : word_map.entrySet()) {
             Set<String> letter_set_copy = new HashSet<String>(letter_set);
@@ -54,7 +58,8 @@ public class Group04WordFinder implements WordFinder {
                 }
             }
         }
-        // main loop
+        // main loop, brute force, check every starting coordinate for a word (except
+        // the last row when vertical and the last column when horizontal)
         for (int r = 0; r < n_rows; ++r) {
             for (int c = 0; c < n_cols; ++c) {
                 // check horizontally
@@ -70,10 +75,7 @@ public class Group04WordFinder implements WordFinder {
                 }
                 Set<String> current_candidates = new HashSet<>(words);
                 Set<String> prev_candidates = new HashSet<String>(current_candidates);
-                for (int offset = 1; offset < n_cols; ++offset) {
-                    if (c + offset >= n_cols) {
-                        break;
-                    }
+                for (int offset = 1; c + offset >= n_cols; ++offset) {
                     char curr_char = board.getLetterAt(r, c + offset);
                     String key = "" + curr_char + offset;
                     List<String> curr_words = possible_entries.get(key);
@@ -116,10 +118,7 @@ public class Group04WordFinder implements WordFinder {
                 }
                 current_candidates = new HashSet<>(words);
                 prev_candidates = new HashSet<String>(current_candidates);
-                for (int offset = 1; offset < n_rows; ++offset) {
-                    if (r + offset >= n_rows) {
-                        break;
-                    }
+                for (int offset = 1; r + offset >= n_rows; ++offset) {
                     char curr_char = board.getLetterAt(r + offset, c);
                     String key = "" + curr_char + offset;
                     List<String> curr_words = possible_entries.get(key);

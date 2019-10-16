@@ -2,6 +2,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "CodeLens (Launch) - TestDriver",
+            "request": "launch",
+            "mainClass": "app.TestDriver",
+            "projectName": "group-lab-13_dcddd2f7"
+        },
+        {
+            "type": "java",
             "name": "CodeLens (Launch) - TestDriver2",
             "request": "launch",
             "mainClass": "app.TestDriver2",

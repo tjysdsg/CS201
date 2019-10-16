@@ -2,10 +2,12 @@ package app;
 
 import java.util.*;
 
-public class OurGroupBoard extends BoardBase {
-    @Override
+public class OurGroupBoard implements Board {
     public void setupNewBoard(String wordListFilename, int rows, int columns) {
-        super.setupNewBoard(wordListFilename, rows, columns);
+        this.n_rows = rows;
+        this.n_cols = columns;
+        In filein = new In(wordListFilename);
+        this.dictionary = filein.readAllLines();
         this.grid = new char[rows * columns];
         for (int i = 0; i < rows * columns; ++i) {
             this.grid[i] = '0';
@@ -123,7 +125,6 @@ public class OurGroupBoard extends BoardBase {
         return result;
     }
 
-    @Override
     public String toString() {
         String result = "";
         for (int i = 0; i < n_rows * n_cols; ++i) {
@@ -139,7 +140,7 @@ public class OurGroupBoard extends BoardBase {
         return result;
     }
 
-    protected boolean dictContains(String word) {
+    private boolean dictContains(String word) {
         return searchString(word) != -1;
     }
 
@@ -163,5 +164,46 @@ public class OurGroupBoard extends BoardBase {
         }
     }
 
+    public int getRows() {
+        return n_rows;
+    }
+
+    public int getColumns() {
+        return n_cols;
+    }
+
+    protected ArrayList<String> getMaxLenSequence(char[] charSeq) {
+        ArrayList<String> results = new ArrayList<String>();
+        String s = "";
+        boolean started = false;
+        for (int i = 0; i < charSeq.length; ++i) {
+            if (started) {
+                if (charSeq[i] == '0' || i == charSeq.length - 1) {
+                    started = false;
+                    results.add(s);
+                    s = new String();
+                } else {
+                    s += "" + charSeq[i];
+                }
+            } else {
+                if (charSeq[i] != '0') {
+                    started = true;
+                    s += "" + charSeq[i];
+                }
+            }
+        }
+        return results;
+    }
+
+    public char getLetterAt(int row, int col) {
+        if (row >= this.n_rows || col >= this.n_cols) {
+            return '\u0000';
+        }
+        return this.grid[row * this.n_cols + col];
+    }
+
+    // members
+    private int n_rows, n_cols;
+    private String[] dictionary;
     private char[] grid;
 }
