@@ -2,6 +2,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "CodeLens (Launch) - Problem_4_5_35",
+            "request": "launch",
+            "mainClass": "app.Problem_4_5_35",
+            "projectName": "group-lab-12"
+        },
+        {
+            "type": "java",
             "name": "CodeLens (Launch) - Problem_4_4_36",
             "request": "launch",
             "mainClass": "app.Problem_4_4_36",
