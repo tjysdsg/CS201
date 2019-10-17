@@ -45,7 +45,7 @@ public class WordLadder {
     private int distance(String a, String b) {
         int len = a.length();
         int cost = 0;
-        for (int i = 1; i < len; ++i) {
+        for (int i = 0; i < len; ++i) {
             // costs of: insertion, match and deletion
             char ca = a.charAt(i);
             char cb = b.charAt(i);
