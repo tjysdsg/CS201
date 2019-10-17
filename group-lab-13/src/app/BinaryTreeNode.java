@@ -125,16 +125,20 @@ public class BinaryTreeNode<T extends Comparable<T>> {
 	}
 
 	public boolean heapOrdered() {
+		return this.heapOrdered(this.key);
+	}
+
+	private boolean heapOrdered(T root_key) {
 		boolean left = true;
 		boolean right = true;
 		if (this.leftChild == null && this.rightChild == null) {
 			return true;
 		}
 		if (this.leftChild != null) {
-			left = this.leftChild.heapOrdered() && this.key.compareTo(this.leftChild.key) > 0;
+			left = this.leftChild.heapOrdered(root_key) && root_key.compareTo(this.leftChild.key) > 0;
 		}
 		if (this.rightChild != null) {
-			right = this.rightChild.heapOrdered() && this.key.compareTo(this.rightChild.key) > 0;
+			right = this.rightChild.heapOrdered(root_key) && root_key.compareTo(this.rightChild.key) > 0;
 		}
 		return left && right;
 	}
